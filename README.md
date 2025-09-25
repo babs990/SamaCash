@@ -1,175 +1,142 @@
-# MoneyTransfer - Plateforme de transfert d'argent
+# Samacash
 
-## Description
-
-MoneyTransfer est une application web qui permet aux utilisateurs de gérer leur compte, d'effectuer des virements, des dépôts et des retraits d'argent en toute sécurité.
-Le projet utilise **Spring Boot** pour le backend et **Angular** pour le frontend, avec **JWT** pour l'authentification et **H2/MySQL** pour la base de données.
+**Samacash** est une application de transfert d'argent qui permet aux utilisateurs de gérer leur compte, d'effectuer des dépôts, des retraits et des transferts d'argent entre utilisateurs en toute sécurité.
 
 ---
 
-## Fonctionnalités
+## Table des matières
 
-### Backend (Spring Boot)
-
-* Authentification et enregistrement des utilisateurs
-* Gestion des comptes (balance, currency)
-* Historique des transactions
-* Virements entre utilisateurs
-* Dépôts et retraits
-* Gestion des erreurs avec des exceptions personnalisées
-* Sécurité avec JWT
-
-### Frontend (Angular)
-
-* Connexion / Inscription
-* Consultation du solde
-* Virements vers d'autres utilisateurs
-* Dépôts et retraits
-* Historique des transactions
-* Interface simple et responsive
+* [Technologies](#technologies)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Lancement](#lancement)
+* [Fonctionnalités](#fonctionnalités)
+* [Architecture](#architecture)
+* [API Endpoints](#api-endpoints)
+* [Licence](#licence)
 
 ---
 
-## Architecture
+## Technologies
 
-```
-Frontend (Angular)  <---->  Backend (Spring Boot)  <---->  Base de données (H2/MySQL)
-```
+Le projet utilise les technologies suivantes :
 
-* **Angular** : HTTP client pour communiquer avec le backend via REST API.
-* **Spring Boot** : REST API sécurisée par JWT.
-* **JPA/Hibernate** : gestion des entités User, Account et Transaction.
-* **Base de données** : stockage des utilisateurs, comptes et transactions.
+* **Backend :** Java, Spring Boot, Spring Security, Hibernate, JPA
+* **Base de données :** MySQL (ou PostgreSQL selon le choix)
+* **Frontend :** Angular (standalone components)
+* **Authentification :** JWT (JSON Web Token)
+* **Gestion des dépendances :** Maven pour le backend, npm pour le frontend
 
 ---
 
 ## Installation
 
-### Prérequis
-
-* Java 17+
-* Maven
-* Node.js & npm
-* Angular CLI
-* Base de données MySQL ou H2 (selon configuration)
-
-### Backend
-
-1. Cloner le projet :
+1. **Cloner le projet :**
 
 ```bash
-git clone <url_du_projet>
-cd moneytransfer-backend
+git clone <URL_DE_VOTRE_REPO>
+cd samacash
 ```
 
-2. Configurer la base de données dans `application.properties` :
+2. **Backend :**
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/moneytransfer
-spring.datasource.username=root
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=update
-```
-
-3. Lancer l'application :
+   * Naviguer dans le dossier backend
+   * Installer les dépendances Maven et compiler :
 
 ```bash
-mvn spring-boot:run
+mvn clean install
 ```
 
-* Le serveur backend sera accessible sur `http://localhost:8080`.
+3. **Frontend :**
 
-### Frontend
-
-1. Aller dans le dossier frontend :
-
-```bash
-cd moneytransfer-frontend
-```
-
-2. Installer les dépendances :
+   * Naviguer dans le dossier frontend
+   * Installer les dépendances Angular :
 
 ```bash
 npm install
 ```
 
-3. Lancer l'application Angular :
+---
+
+## Configuration
+
+* Créer une base de données nommée `samacash` (ou selon le fichier `application.properties`)
+* Configurer les paramètres de connexion à la base de données dans `src/main/resources/application.properties` :
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/samacash
+spring.datasource.username=root
+spring.datasource.password=motdepasse
+spring.jpa.hibernate.ddl-auto=update
+```
+
+* Ajouter les configurations d’envoi de mail si nécessaire (pour notifications)
+
+---
+
+## Lancement
+
+1. **Backend :**
+
+```bash
+mvn spring-boot:run
+```
+
+2. **Frontend :**
 
 ```bash
 ng serve
 ```
 
-* L'application sera accessible sur `http://localhost:4200`.
+* Le frontend sera accessible par défaut sur `http://localhost:4200`
+* Le backend sera sur `http://localhost:8080`
+
+---
+
+## Fonctionnalités
+
+* Création de compte utilisateur et connexion sécurisée
+* Consultation du solde du compte
+* Historique des transactions
+* Dépôt d'argent
+* Retrait d'argent
+* Transfert d'argent entre utilisateurs avec frais calculés automatiquement
+* Gestion des erreurs et notifications
+
+---
+
+## Architecture
+
+* **Entities :** `AppUser`, `Account`, `Transaction`
+* **Repository :** Interfaces JPA pour accéder aux données
+* **Service :** Logique métier (transfert, dépôt, retrait)
+* **Controller :** Endpoints REST pour le frontend
+* **Security :** JWT pour sécuriser les endpoints
 
 ---
 
 ## API Endpoints
 
-### Auth
-
-| Méthode | Endpoint       | Description           |
-| ------- | -------------- | --------------------- |
-| POST    | /auth/register | Créer un utilisateur  |
-| POST    | /auth/login    | Connexion utilisateur |
-
-### Compte
-
-| Méthode | Endpoint         | Description        |
-| ------- | ---------------- | ------------------ |
-| GET     | /account/balance | Récupérer le solde |
-
-### Transactions
-
-| Méthode | Endpoint               | Description                 |
-| ------- | ---------------------- | --------------------------- |
-| GET     | /transactions          | Historique des transactions |
-| POST    | /transactions/send     | Virement entre utilisateurs |
-| POST    | /transactions/deposit  | Dépôt d'argent              |
-| POST    | /transactions/withdraw | Retrait d'argent            |
+| Méthode | Endpoint               | Description                             |
+| ------- | ---------------------- | --------------------------------------- |
+| POST    | /auth/register         | Création d’un compte utilisateur        |
+| POST    | /auth/login            | Connexion et récupération du token      |
+| GET     | /account/balance       | Récupérer le solde du compte            |
+| GET     | /transactions          | Historique des transactions             |
+| POST    | /transactions/send     | Transfert d'argent vers un autre compte |
+| POST    | /transactions/deposit  | Dépôt d'argent sur le compte            |
+| POST    | /transactions/withdraw | Retrait d'argent du compte              |
 
 ---
 
-## Structure des entités principales
+## Licence
 
-* **User / AppUser**
-
-  * `id`, `email`, `password`, `firstName`, `lastName`, `role`
-
-* **Account**
-
-  * `id`, `user`, `balance`, `currency`
-
-* **Transaction**
-
-  * `id`, `fromAccount`, `toAccount`, `amount`, `fee`, `type`, `description`, `createdAt`
+Ce projet est sous licence MIT.
+Vous êtes libre de le modifier, le distribuer et l'utiliser à des fins personnelles ou professionnelles.
 
 ---
 
-## Gestion des erreurs
-
-* `ApiException` : utilisé pour retourner des messages d’erreur personnalisés comme "Solde insuffisant" ou "Utilisateur introuvable".
-* Les erreurs sont renvoyées avec le code HTTP approprié (400 ou 500).
-
----
-
-## Sécurité
-
-* Authentification via JWT.
-* Chaque requête API nécessitant un utilisateur authentifié doit inclure le token dans l’en-tête `Authorization: Bearer <token>`.
-
----
-
-## Contributions
-
-1. Fork le projet
-2. Crée une branche : `git checkout -b feature/ma-fonctionnalité`
-3. Commit tes modifications : `git commit -m 'Ajout de ma fonctionnalité'`
-4. Push sur la branche : `git push origin feature/ma-fonctionnalité`
-5. Ouvre une Pull Request
-
----
-
-## Contact
+**Samacash** – Simplifiez vos transferts d'argent en toute sécurité.
 
 Pour toute question ou suggestion :
 **Serigne Khalifa Ababacar Sy
